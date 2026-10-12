@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sport: home task</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#1a1a1a;--mute:#595959;--line:#d9e1f0;--accent:#305bab;--soft:#e8f0ff;--ok:#1b7a3d;--okbg:#e5f6ea;--bad:#b3261e;--badbg:#fdeceb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--card:#1a2130;--ink:#eef1f7;--mute:#aab3c5;--line:#2c3750;--accent:#8fb3ff;--soft:#223152;--ok:#6fdc97;--okbg:#17321f;--bad:#ff8a80;--badbg:#3a1c1b}}
+:root[data-theme="dark"]{--bg:#10141c;--card:#1a2130;--ink:#eef1f7;--mute:#aab3c5;--line:#2c3750;--accent:#8fb3ff;--soft:#223152;--ok:#6fdc97;--okbg:#17321f;--bad:#ff8a80;--badbg:#3a1c1b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 90px}
+h1{font-size:2rem;margin:8px 0 4px}h2{font-size:1.2rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 18px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.badge{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700;margin-right:8px}
+.hint{color:var(--mute);font-size:.95rem;margin:0 0 12px}
+.bank{background:var(--soft);border-radius:10px;padding:10px 12px;margin:0 0 12px;font-weight:600}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;margin:6px 0;border:1px solid transparent}
+.row .t{flex:1 1 280px}
+input[type=text],select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:130px}
+select{min-width:110px}
+.row.ok{background:var(--okbg);border-color:var(--ok)}.row.no{background:var(--badbg);border-color:var(--bad)}
+.ans{display:none;font-size:.9rem;color:var(--bad);flex-basis:100%}
+.row.no .ans{display:block}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px 16px;background:var(--accent);color:var(--bg);cursor:pointer}
+button.alt{background:var(--soft);color:var(--accent)}
+.bar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+#score{font-weight:700}
+textarea{width:100%;min-height:200px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;box-sizing:border-box;resize:vertical}
+.wc{color:var(--mute);margin:6px 0}.wc.good{color:var(--ok);font-weight:700}
+label.ck{display:block;margin:4px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Sport: home task</h1>
+<p class="sub">Practise the vocabulary and word formation from this lesson. Do the exercises, press <b>Check answers</b>, then write your article.</p>
+<div id="app"></div>
+<section id="w">
+<h2><span class="badge">6</span>Writing: my favourite sport</h2>
+<p class="hint">Write an article of 120-150 words for an English-language magazine. Say why you like your sport and give advice to someone who wants to take it up.</p>
+<textarea id="art" placeholder="Title, then your article..."></textarea>
+<div class="wc" id="wc">0 words</div>
+<p class="hint">Tick what you included:</p>
+<label class="ck"><input type="checkbox"> an attention-grabbing title</label>
+<label class="ck"><input type="checkbox"> a direct question to the reader</label>
+<label class="ck"><input type="checkbox"> contractions (don't, it's)</label>
+<label class="ck"><input type="checkbox"> an informal linker (so, anyway, but)</label>
+<label class="ck"><input type="checkbox"> advice for beginners</label>
+<label class="ck"><input type="checkbox"> a closing sentence for the reader to think about</label>
+<p><button class="alt" id="copy" type="button">Copy my article</button> <span id="msg" class="hint"></span></p>
+</section>
+</main>
+<div class="bar"><button id="chk" type="button">Check answers</button><button class="alt" id="rst" type="button">Try again</button><span id="score" aria-live="polite"></span></div>
+<script>
+var SPORTS=["athletics","cycling","football","golf","skiing","tennis"];
+var S=[
+{h:"Which sport?",d:"Choose the sport that each group of words belongs to.",k:"sel",o:SPORTS,q:[
+["course, green, hole","golf"],["slope, goggles, lift","skiing"],["saddle, helmet, pedals","cycling"],["track, lane, field event","athletics"],["pitch, referee, corner","football"],["court, net, racket","tennis"]]},
+{h:"Do, go or play?",d:"Choose the correct verb for each sport.",k:"sel",o:["do","go","play"],q:[
+["__ judo","do"],["__ swimming","go"],["__ basketball","play"],["__ gymnastics","do"],["__ skiing","go"],["__ golf","play"],["__ cycling","go"],["__ yoga","do"]]},
+{h:"Sports verbs",d:"Complete each sentence with a verb from the box.",b:"beat, draw, hit, kick, pass, take, win",k:"txt",q:[
+["Our team hopes to __ the league champions on Saturday.","beat"],["If both teams score the same number of goals, they __.","draw"],["You must __ the ball hard to get it over the net.","hit"],["In rugby you can __ the ball over the posts to score extra points.","kick"],["Quick! __ the ball to Maria. She's free!","pass"],["Eight players from each team __ part in the final.","take"],["She hopes to __ a gold medal at the Olympics.","win"]]},
+{h:"Word formation: people",d:"Write the person word. Use the verb or noun in brackets.",k:"txt",q:[
+["The 100 m __ (compete) ran a personal best.","competitor"],["Thousands of __ (spectate) filled the stadium.","spectators"],["Every __ (participate) gets a medal.","participant"],["The __ (organise) booked the stadium months ago.","organiser|organizer"],["She trained as a __ (cycle) for five years.","cyclist"],["Each __ (contest) spins the wheel in turn.","contestant"],["The __ (box) won on points.","boxer"]]},
+{h:"Negative prefixes",d:"Choose the prefix that makes each adjective negative.",k:"sel",o:["dis-","il-","im-","in-","ir-","un-"],q:[
+["__ patient","im-"],["__ legal","il-"],["__ responsible","ir-"],["__ honest","dis-"],["__ likely","un-"],["__ experienced","in-"]]}
+];
+var app=document.getElementById("app");
+function esc(s){return s.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function ctl(s,i){
+ if(s.k==="sel"){return '<select aria-label="answer"><option value="">choose</option>'+s.o.map(function(x){return '<option>'+x+'</option>'}).join("")+'</select>'}
+ return '<input type="text" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="answer">'
+}
+function build(){
+ app.innerHTML=S.map(function(s,si){
+  return '<section data-s="'+si+'"><h2><span class="badge">'+(si+1)+'</span>'+s.h+'</h2><p class="hint">'+s.d+'</p>'+(s.b?'<div class="bank">'+s.b+'</div>':'')+
+  s.q.map(function(q,qi){
+   var p=q[0].split("__");
+   var html=p.length>1?esc(p[0])+ctl(s)+esc(p[1]):esc(q[0])+ctl(s);
+   if(s.k==="sel"&&p.length>1){html=esc(p[0])+ctl(s)+" "+esc(p[1])}
+   return '<div class="row" data-q="'+qi+'"><div class="t">'+(qi+1)+'. '+html+'</div><div class="ans"></div></div>'}).join("")+'</section>'}).join("")
+}
+function check(){
+ var tot=0,ok=0;
+ S.forEach(function(s,si){
+  var rows=app.querySelectorAll('section[data-s="'+si+'"] .row');
+  rows.forEach(function(r,qi){
+   var el=r.querySelector("select,input"),v=el.value.trim().toLowerCase(),a=s.q[qi][1].toLowerCase().split("|");
+   var good=a.indexOf(v)>-1;tot++;if(good)ok++;
+   r.className="row "+(good?"ok":"no");r.querySelector(".ans").textContent="Answer: "+a[0];
+  })});
+ document.getElementById("score").textContent="Score: "+ok+" / "+tot
+}
+function reset(){build();document.getElementById("score").textContent=""}
+document.getElementById("chk").onclick=check;
+document.getElementById("rst").onclick=reset;
+build();
+var art=document.getElementById("art"),wc=document.getElementById("wc");
+function count(){var n=(art.value.trim().match(/\S+/g)||[]).length;wc.textContent=n+" words";wc.className="wc"+(n>=120&&n<=150?" good":"");
+ try{localStorage.setItem("sport-draft",art.value)}catch(e){}}
+try{var d=localStorage.getItem("sport-draft");if(d){art.value=d}}catch(e){}
+art.addEventListener("input",count);count();
+document.getElementById("copy").onclick=function(){
+ var m=document.getElementById("msg");
+ try{navigator.clipboard.writeText(art.value).then(function(){m.textContent="Copied. Paste it into your email or message to your teacher."},function(){art.select();m.textContent="Select all and copy it by hand."})}catch(e){art.select();m.textContent="Select all and copy it by hand."}
+};
+</script>
+</body>
+</html>
